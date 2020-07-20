@@ -15,10 +15,10 @@ and then pushing.git@git:jonas/toybox.git
 #### Options
 
     gitwrapper.sh OPTIONS
-   -r <DIR>	Allow pull from DIR
-   -w <DIR>	Allow push to DIR
-   -a <DIR>	Allow push/pull from/to DIR
-   -i		Allow inetractive Login
+    -r <DIR>	Allow pull from DIR
+    -w <DIR>	Allow push to DIR
+    -a <DIR>	Allow push/pull from/to DIR
+    -i		Allow inetractive Login
 
 ## reposync.sh
 
