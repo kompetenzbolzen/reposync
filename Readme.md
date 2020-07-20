@@ -4,15 +4,21 @@ Script for juggling git repos
 
 ## gitwrapper.sh
 
-Its main purpose is to create a new empty repo if a push to a non-existent one is requested.
-It is intended to be used with `command=` option in `.ssh/authorized_keys`.
-As a side effect, it also implements a crude access control via SSH keys.
-The first argument is the folder this specific key is allowed to push to.
+gitwrapper.sh automatically creates repositories if they are pushed for the first time.
+If a non-existent repo is pulled, an empty one is sent instead.
 
-If the command invoked by the ssh client is not `git upload-pack`, it is executed without further checking,
-if none is supplied bash starts in interactive mode.
-This would allow anyone to easily override the push restrictions,
-so they should be seen as a fuck-up-preventer, not a security measure.
+This allows for easy creation of new repos by just cloning any name, creating a first commit,
+and then pushing.git@git:jonas/toybox.git
+
+`gitwrapper.sh OPTIONS` is set as a command in `.ssh/authorized_keys`
+
+#### Options
+
+    gitwrapper.sh OPTIONS
+   -r <DIR>	Allow pull from DIR
+   -w <DIR>	Allow push to DIR
+   -a <DIR>	Allow push/pull from/to DIR
+   -i		Allow inetractive Login
 
 ## reposync.sh
 
