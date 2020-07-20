@@ -21,8 +21,9 @@ function usage() {
 $(basename $0) [options]
 
 Options:
-	-r <DIR>	Allowed directory for pull
-	-w <DIR>	Allowed directory for push
+	-r <DIR>	Allow pull from DIR
+	-w <DIR>	Allow push to DIR
+	-a <DIR>	Allow push/pull from/to DIR
 	-i		Allow inetractive Login
 EOF
 	exit $1
@@ -67,7 +68,7 @@ unset INTERACTIVE READING WRITING
 READING=()
 WRITING=()
 
-while getopts "r:w:i" options; do
+while getopts "r:w:a:i" options; do
 	case "$options" in
 		i)
 			INTERACTIVE="yes";;
@@ -75,6 +76,9 @@ while getopts "r:w:i" options; do
 			READING+=( "$OPTARG" );;
 		w)
 			WRITING+=( "$OPTARG" );;
+		a)
+			WRITING+=( "$OPTARG" )
+			READING+=( "$OPTARG" );;
 		:)
 			perror "-$OPTARG requires argument"
 			usage 1;;
