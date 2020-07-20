@@ -43,8 +43,6 @@ function has_access() {
 		return 1
 	fi
 
-	basename $1
-
 	readonly reponame_regex='^\w+\.git$'
 	if [[ ! "$(basename "$1")" =~ $reponame_regex ]]; then
 		perror "Invalid repository"
@@ -55,7 +53,7 @@ function has_access() {
 		[ "$(dirname "$1")" = "$dir" ] && return 0
 	done
 
-	perror Invalid repository
+	perror Invalid repository2
 	return 1
 }
 
@@ -91,14 +89,26 @@ if [ -z "$SSH_ORIGINAL_COMMAND" ]; then
 	exit $?
 fi
 
-repo_path=$(sed -n 's/^git upload-pack \(.*\)$/\1/p' <<< "$SSH_ORIGINAL_COMMAND")
-if [ ! -z "$repo_path" ]; then
+read direction repo_path < <( echo "$SSH_ORIGINAL_COMMAND" | sed -n 's/^git[ -]\(receive\|upload\)-pack \(.*\)$/\1 \2/p' | tr -d "'" )
+[ -z "$repo_path" ] && exit 1
+
+perror "$repo_path"
+
+if [ "$direction" = "receive" ]; then
 	if ! has_access "$repo_path" "w"; then
 		perror "An error occured: No such file or directory."
 		exit 1
 	fi
 
-	[ ! -e "$repo_path" ] && git init --bare "$repo_path"
-fi
+	[ ! -e "$repo_path" ] && git init --bare "$repo_path" > /dev/null
 
-eval $SSH_ORIGINAL_COMMAND
+	git-receive-pack "$repo_path"
+elif [ "$direction" = "upload" ]; then
+	if ! has_access "$repo_path" "r"; then
+		perror "An error occured: No such file or directory."
+		exit 1
+	fi
+
+	[ -e "$repo_path" ] && git-upload-pack "$repo_path" || git-upload-pack empty.git
+fi
+exit $?
