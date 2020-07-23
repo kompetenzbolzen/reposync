@@ -1,6 +1,6 @@
 # reposync
 
-Script for juggling git repos
+Scripts for juggling git repos
 
 ## gitwrapper.sh
 

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# reposync.sh
+# Syncs a folder to GitHub
+
 ARGV=($@)
 ARGC=${#ARGV[@]}
 
@@ -27,15 +30,16 @@ function github_create_repo() {
 		-d "{\"name\":\"$1\"}" "$API_BASE/user/repos"; exit $? )
 	[ $? -ne 0 ] && exit 1
 
-	GH_REPOS[$1.git]=$(jq ".ssh_url" <<< $JSON_RETURN | tr -d '"')
+	GH_REPOS[$1.git]=$(jq -r ".clone_url" <<< $JSON_RETURN | sed -n -e "s/^\(https:\/\/\)\(.*\)$/\1$USERNAME:$TOKEN@\2/p" )
 }
 
 function github_update_repo_list() {
 	GH_REPOS=()
 
-	unset CURL_USER
+	local CURL_USER=""
 	[ ! -z "$TOKEN" ] && CURL_USER="-u $USERNAME:$TOKEN"
-	
+
+	# replace with /user/repos to also get private
 	JSON_REPOS=$(curl_wrapper $CURL_USER "$API_BASE/users/$USERNAME/repos"; exit $?)
 	[ $? -ne 0 ] && exit 1
 
@@ -43,7 +47,7 @@ function github_update_repo_list() {
 	
 	for (( i=0; i<$GH_REPOS_COUNT; i++ )); do
 		name="$(jq ".[$i].name" <<< "$JSON_REPOS" | tr -d '"' ).git"
-		GH_REPOS[$name]=$(jq ".[$i].ssh_url" <<< "$JSON_REPOS" | tr -d '"' )
+		GH_REPOS[$name]=$(jq -r ".[$i].clone_url" <<< "$JSON_REPOS" | sed -n -e "s/^\(https:\/\/\)\(.*\)$/\1$USERNAME:$TOKEN@\2/p" )
 	done
 }
 
@@ -72,28 +76,21 @@ printf "%s\n" "${TO_PUSH[@]}"
 echo
 
 for repo in "${TO_CLONE[@]}"; do
-	mkdir "$REPO_DIR/$repo"
-	git clone --bare \
+	##sudo -u git mkdir "$REPO_DIR/$repo"
+	sudo -u git git clone --bare \
 		"${GH_REPOS[$repo]}" "$REPO_DIR/$repo"
-
-	git -C "$REPO_DIR/$repo" remote add github_sync "${GH_REPOS[$repo]}"
 done
 
 for repo in "${TO_CREATE[@]}"; do
 	github_create_repo ${repo%.git}
+	
+	[ -z "${GH_REPOS[$repo]}" ] && echo No clone_URL? && continue
 
-	git -C "$REPO_DIR/$repo" remote | grep -q github_sync && \
-		git -C "$REPO_DIR/$repo" remote remove github_sync
-
-	git -C "$REPO_DIR/$repo" remote add github_sync "${GH_REPOS[$repo]}"
-	git -C "$REPO_DIR/$repo" push github_sync
+	git -C "$REPO_DIR/$repo" push "${GH_REPOS[$repo]}"
 done
 
 for repo in "${TO_PUSH[@]}"; do
-	! git -C "$REPO_DIR/$repo" remote | grep -q github_sync && \
-		git -C "$REPO_DIR/$repo" remote add github_sync "${GH_REPOS[$repo]}"
-
-	git -C "$REPO_DIR/$repo" push --all github_sync
+	git -C "$REPO_DIR/$repo" push "${GH_REPOS[$repo]}"
 done
 
 echo
