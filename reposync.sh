@@ -3,6 +3,19 @@
 # reposync.sh
 # Syncs a folder to GitHub
 
+# required setup:
+# - different user for script (no specific name needed) and git access (git)
+#
+# Usage:
+#	reposync.sh <CONFIG FILE>
+#
+# Config file: 
+# Sourcable bash script setting the variables:
+#	USERNAME	GitHub Username
+#	TOKEN		Password or Token
+#	REPO_DIR	Directory on the filesystem
+#	PRIVATE		Treat repositories as private (YES/[NO])
+
 ARGV=($@)
 ARGC=${#ARGV[@]}
 
@@ -51,7 +64,9 @@ function github_update_repo_list() {
 	done
 }
 
-[ -f "$HOME/settings.sh" ] && source $HOME/settings.sh
+[ ! -f "$1" ] && echo Config file not found && exit 1
+
+source "$1"
 
 github_update_repo_list
 
