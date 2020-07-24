@@ -1,0 +1,3 @@
+Runas_Alias GIT = git
+
+gitman		ALL = (GIT) NOPASSWD: ALL

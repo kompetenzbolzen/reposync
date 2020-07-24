@@ -1,0 +1,19 @@
+css=/cgit.css
+logo=/cgit.png
+
+readme=:Readme.md
+
+source-filter=/usr/lib/cgit/filters/syntax-highlighting.py
+about-filter=/usr/lib/cgit/filters/about-formatting.sh
+
+enable-http-clone=1
+#clone-url=
+
+remove-suffix=1
+
+scan-path=/var/git
+
+virtual-root=/
+
+root-title=cGit
+root-desc=cGit repos
