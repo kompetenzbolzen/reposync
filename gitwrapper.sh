@@ -90,8 +90,6 @@ fi
 read direction repo_path < <( echo "$SSH_ORIGINAL_COMMAND" | sed -n 's/^git[ -]\(receive\|upload\)-pack \(.*\)$/\1 \2/p' | tr -d "'" )
 [ -z "$repo_path" ] && exit 1
 
-perror "$repo_path"
-
 if [ "$direction" = "receive" ]; then
 	if ! has_access "$repo_path" "w"; then
 		perror "An error occured: No such file or directory."
