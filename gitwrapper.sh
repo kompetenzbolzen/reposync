@@ -10,6 +10,8 @@
 #
 #	command="/path/to/wrapper.sh myrepos" ssh-rsa ... user@example
 #
+# requires an empty repo called "empty.git" in home of git user to offer
+# an empty repo for requests for non-existant repos
 
 function perror() {
 	>&2 echo "$@"
