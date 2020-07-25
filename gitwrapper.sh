@@ -58,12 +58,6 @@ function has_access() {
 	return 1
 }
 
-#READING=( repos jonas public )
-#WRITING=( jonas )
-#
-#has_access "public/asdf.git" "r"
-#exit $?
-
 unset INTERACTIVE READING WRITING
 READING=()
 WRITING=()
