@@ -6,6 +6,7 @@ Scripts for juggling git repos
 
 gitwrapper.sh automatically creates repositories if they are pushed for the first time.
 If a non-existent repo is pulled, an empty one is sent instead.
+This feature requires an empty git repo called "empty.git" in the home of the git user.
 
 This allows for easy creation of new repos by just cloning any name, creating a first commit,
 and then pushing.git@git:jonas/toybox.git
