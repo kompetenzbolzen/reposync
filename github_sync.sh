@@ -125,7 +125,7 @@ for repo in "${TO_CREATE[@]}"; do
 done
 
 for repo in "${TO_PUSH[@]}"; do
-	git -C "$REPO_DIR/$repo" push "${GH_REPOS[$repo]}"
+	git -C "$REPO_DIR/$repo" push --all "${GH_REPOS[$repo]}"
 done
 
 echo
