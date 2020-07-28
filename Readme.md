@@ -4,14 +4,16 @@ Scripts for juggling git repos
 
 ## gitwrapper.sh
 
+An ssh gatekeeper and helper.
+It is set and configured via the `command` option in `authorized_keys`.
+This allows it to grant read and/or write privileges to specific folders based on SSH keys.
+
 gitwrapper.sh automatically creates repositories if they are pushed for the first time.
 If a non-existent repo is pulled, an empty one is sent instead.
-This feature requires an empty git repo called "empty.git" in the home of the git user.
+This feature requires `$HOME/empty.git` to be an empty git repository.
 
 This allows for easy creation of new repos by just cloning any name, creating a first commit,
-and then pushing.git@git:jonas/toybox.git
-
-`gitwrapper.sh OPTIONS` is set as a command in `.ssh/authorized_keys`
+and then pushing.
 
 #### Options
 
@@ -21,16 +23,27 @@ and then pushing.git@git:jonas/toybox.git
     -a <DIR>	Allow push/pull from/to DIR
     -i		Allow inetractive Login
 
-## reposync.sh
+#### Example
 
-This script handles synchronisation to GitHub via the GitHub API and SSH,
-so it needs a valid API key and an authorized SSH key.
-`~/settings.sh` provides `$USERNAME`, `$TOKEN` and `$REPO_DIR`.
-If a repo only exists locally, it is created via the API, then pushed.
-All repos present on both sides are pushed.
-All remote-only repos are cloned.
-The last behaviour is only intended for migrating, not for usage.
-Repos are only pushed, never fetched so GitHub acts as a mirror and thus should be treated as read-only.
+    # .ssh/authorized_keys
+    
+    # Allow bob read/write on bob and read on public
+    command="gitwrapper.sh -a bob -r public" ssh-rsa AAAA... bob@bobpc
+    
+    # Allow joe read on public
+    command="gitwrapper.sh -r public" ssh-rsa AAAA... joe@joepc
+
+## github_sync.sh
+
+This script handles mirroring to GitHub via the GitHub API.
+Note that it only ever pushes, so changes on GitHub will result in failure.
+The first argument specifies the configuration file, setting the following variables:
+
+    USERNAME	GitHub Username
+    TOKEN	GitHub Authorization Token
+    REPO_DIR	local repository directory
+    PRIVATE	Specifies, whether $REPO_DIR should be trated as public (false) or private (true)
+    		Repos will be created on GitHub accordingly
 
 ## License
 
