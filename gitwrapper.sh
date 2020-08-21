@@ -46,7 +46,7 @@ function has_access() {
 		return 1
 	fi
 
-	readonly reponame_regex='^\w+\.git$'
+	readonly reponame_regex='^[A-Za-z0-9_\-]+\.git$'
 	if [[ ! "$(basename "$1")" =~ $reponame_regex ]]; then
 		perror "Invalid repository"
 		return 1
