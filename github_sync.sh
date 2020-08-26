@@ -121,11 +121,12 @@ for repo in "${TO_CREATE[@]}"; do
 	
 	[ -z "${GH_REPOS[$repo]}" ] && echo No clone_URL? && continue
 
-	git -C "$REPO_DIR/$repo" push "${GH_REPOS[$repo]}"
+	TO_PUSH+=($repo)
 done
 
 for repo in "${TO_PUSH[@]}"; do
 	git -C "$REPO_DIR/$repo" push --all "${GH_REPOS[$repo]}"
+	git -C "$REPO_DIR/$repo" push --tags "${GH_REPOS[$repo]}"
 done
 
 echo
