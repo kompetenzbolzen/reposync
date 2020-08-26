@@ -112,7 +112,7 @@ printf "%s\n" "${TO_PUSH[@]}"
 echo
 
 for repo in "${TO_CLONE[@]}"; do
-	sudo -u git git clone --bare \
+	git clone --bare \
 		"${GH_REPOS[$repo]}" "$REPO_DIR/$repo"
 done
 
