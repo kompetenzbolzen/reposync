@@ -6,7 +6,7 @@
 
 ROOTDIR=$(realpath "$1")
 
-for dir in $(ls -d "$ROOTDIR/*.git/"); do
+for dir in $ROOTDIR/*; do
 	echo $dir
-	git -C "$dir" fetch --mirror
+	git -C "$dir" fetch --all
 done
