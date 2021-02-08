@@ -15,6 +15,8 @@
 #	TOKEN		Password or Token
 #	REPO_DIR	Directory on the filesystem
 #	PRIVATE		Treat repositories as private (true/false)
+#	LIMIT		Limit syncing to repos specified in LIMIT_TO (true/false)
+#	LIMIT_TO	Array of repos to limit syncing to
 
 ARGV=($@)
 ARGC=${#ARGV[@]}
@@ -99,6 +101,17 @@ TO_CREATE=( $(comm -13 <(printf "%s\n" "${!GH_REPOS[@]}" | sort) \
 	<(printf "%s\n" "${LOCAL_REPOS[@]}" | sort) ) )
 TO_PUSH=( $(comm -12 <(printf "%s\n" "${!GH_REPOS[@]}" | sort) \
 	<(printf "%s\n" "${LOCAL_REPOS[@]}" | sort) ) )
+
+if [ "$LIMIT" = "true" -a "${#LIMIT_TO[@]}" -gt 0 ]; then
+	TO_CLONE=( $(comm -12 <(printf "%s\n" "${LIMIT_TO[@]}" | sort) \
+		<(printf "%s\n" "${TO_CLONE[@]}" | sort) ) )
+
+	TO_CREATE=( $(comm -12 <(printf "%s\n" "${LIMIT_TO[@]}" | sort) \
+		<(printf "%s\n" "${TO_CREATE[@]}" | sort) ) )
+
+	TO_PUSH=( $(comm -12 <(printf "%s\n" "${LIMIT_TO[@]}" | sort) \
+		<(printf "%s\n" "${TO_PUSH[@]}" | sort) ) )
+fi
 
 echo TO CLONE
 printf "%s\n" "${TO_CLONE[@]}"

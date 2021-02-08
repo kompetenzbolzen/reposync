@@ -44,6 +44,8 @@ The first argument specifies the configuration file, setting the following varia
     REPO_DIR	local repository directory
     PRIVATE	Specifies, whether $REPO_DIR should be trated as public (false) or private (true)
     		Repos will be created on GitHub accordingly
+    LIMIT	Limit syncing to repos specified in LIMIT_TO (true/false)
+    LIMIT_TO	Array of repos to limit syncing to
 
 ## License
 
