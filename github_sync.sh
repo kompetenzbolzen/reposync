@@ -70,7 +70,7 @@ function github_update_repo_list() {
 
 	local JSON_REPOS
 	JSON_REPOS=$(curl_wrapper -u $USERNAME:$TOKEN \
-		"$API_BASE/user/repos?visibility=$VISIBILITY"; exit $?)
+		"$API_BASE/user/repos?visibility=$VISIBILITY&per_page=100"; exit $?)
 	[ $? -ne 0 ] && jq ".message" <<< "$JSON_REPOS" && exit 1
 
 	GH_REPOS_COUNT=$(jq ". | length" <<< "$JSON_REPOS")
